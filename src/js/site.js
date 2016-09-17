@@ -188,33 +188,37 @@ site.controller("LoginController", ["$scope", "$firebaseAuth", "$firebaseArray",
 	}
 ]);
 
-site.controller("SearchController", ["$scope", "$firebaseArray", 
-	function($scope, $firebaseArray) {
+site.controller("SearchController", ["$scope", "$firebaseAuth", "$firebaseArray", 
+	function($scope, $firebaseAuth, $firebaseArray) {
 		$scope.submit = function() {
 			// get current location
 			if (navigator.geolocation) {
+				console.log("Has geolocation");
 	        	navigator.geolocation.getCurrentPosition(saveSearch);
 		    } else {
 		        console.log("Error: couldn't get current location");
 		    }
 		}
 
+		function compareActiveSearches() {
+			console.log($scope.active);
+		}
+
 		function saveSearch(position) {
     		var coords = [position.coords.latitude, position.coords.longitude];
-    		
+			console.log(coords);
+
     		// store search in the database
-    		var user = $scope.authObj.$getAuth();
 			var activeRef = firebase.database().ref('active-searches');
 
-			$scope.active = $firebaseArray(activeRef);
-			$scope.active.$add({
-				userId : user.uid,
+			var newSearch = {
+				userId: $firebaseAuth().$getAuth().uid,
 				numPeople: 1,
 				location: coords
-			});
+			};
 
-			$scope.active.$watch("child_added", function(event) {
-			  	console.log(event);
+			activeRef.push(newSearch, function() {
+				console.log("Added search");
 			});
     	}
 	}
