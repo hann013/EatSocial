@@ -117,7 +117,8 @@ site.controller('siteCtrl', ['$scope', '$window', '$state', function($scope, $wi
 		onWindowResize();
 
 		$scope.showSignIn = false;
-		$scope.signedIn = false;
+		$scope.showRegister = false;
+		// $scope.signedIn = false;
 	});
 
 

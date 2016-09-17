@@ -1,10 +1,19 @@
 <section id='results' class="flood-section">
-	<div class="flood-container">
-		<div class="banner">
-			<div class="banner-text">
-				<h1 class="banner-title">Results:</h1>
+
+	<div ng-show="showRegister" class="banner user-form">
+		<form>
+			<input class="mid-col" type="email" ng-model="user.email" placeholder="Email:">
+			<input class="mid-col" type="password" ng-model="user.password" placeholder="Password:">
+			<input class="mid-col" type="password" ng-model="user.password2" placeholder="Confirm Password:">
+			<div class="col-container">
+				<div class="col col-50">
+					<div class="btn mid-col" ng-click="showRegister = false"> Back </div>
+				</div>
+				<div class="col col-50">
+					<div class="btn mid-col" ng-click="register()"> Register </div>
+				</div>
 			</div>
-			columns? how to display? placeholder page here
-		</div>			
+		</form>
 	</div>
+	
 </section>

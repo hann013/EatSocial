@@ -71,22 +71,59 @@ button:focus {
 .flood-section {
   width: 100vw;
   height: 100vh;
-  background: url("/images/food.jpeg") no-repeat;
+  background: url("/images/basketweave.jpg") no-repeat;
   background-position: center center;
   background-size: cover;
   overflow: hidden;
 }
 
 .btn {
+/*  width: 70%;
   height: 2.5em;
   border: $white solid;
   color: $white;
   border-radius: 30px;
-  padding: 9px 15px;
+  padding: 8px 15px;
+  margin: 20px auto;*/
+  margin: 20px auto;
   &:hover {
     background-color: $grey;
   }
 }
+
+.mid-col {
+  width: 70%;
+  height: 2.5em;
+  border: $white solid;
+  color: $white;
+  border-radius: 30px;
+  padding: 8px 15px;
+}
+
+.user-form {
+  input {
+    margin-bottom: 10px;
+  }
+}
+
+.banner {
+  width: 90%;
+  margin: 200px auto 0 auto;
+  text-align: center;
+
+}
+
+.banner-title {
+  color: white;
+}
+
+
+
+
+
+
+
+
 
 
 .sign-in-btn {
@@ -114,17 +151,6 @@ button:focus {
     border-radius: 30px;
     padding: 15px;
   }  
-}
-
-.banner {
-  width: 90%;
-  margin: 200px auto 0 auto;
-  text-align: center;
-
-}
-
-.banner-text {
-  color: white;
 }
 
 .banner-search {
