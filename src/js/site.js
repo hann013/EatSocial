@@ -48,68 +48,9 @@ site.config(function($stateProvider, $urlRouterProvider) {
 // }]);
 
 
-///////////////////////////////////////////////////////////////
-//				OLD STUFF FROM MY WEBSITE
-///////////////////////////////////////////////////////////////
 
 site.controller('siteCtrl', ['$scope', '$window', '$state', function($scope, $window, $state) {
 	
-
-
-
-
-	// $scope.scrollTo = function(toSection){
-	// 	console.log('Jump to: '+toSection);
-	// 	$('body').animate({
-	// 		scrollTop: $(toSection).offset().top - $('.nav-bar').height()}, 500);
-	// }
-
-	// $scope.goTo = function(toSection) {
-	// 	$scope.currSection = toSection;
-	// 	if (!$scope.desk){
-	// 		$scope.showMenu = false;
-	// 	}
-	// }
-
-	$scope.showNavMenu = function() {
-		console.log("toggling menu");
-		$scope.showMenu = ($scope.showMenu ? false: true);
-	}
-
-
-	//boolean for whether device has touch screen
-    $scope.isTouch = ($window.ontouchstart || ('ontouchstart' in window) || $window.navigator.MaxTouchPoints || $window.navigator.msMaxTouchPoints) ? true : false;
-    console.log("TOUCH: " + $scope.isTouch);
-    $scope.isTouch = true;
-
-
-	var onWindowResize = function() {
-		$scope.$apply(function() {
-			if ($(window).innerWidth() < 720){
-                // $scope.mobile = false;
-                $scope.desk = false;
-                console.log("mobile");
-                $scope.showMenu = false;
-            }
-
-            // else if ($(window).innerWidth() < 921){
-            //     $scope.tablet = true;
-            //     $scope.desk = false;
-            //     //console.log("tablet");
-            // }
-
-            else {
-                // $scope.tablet = true;
-                $scope.desk = true;
-                console.log("desk");
-                $scope.showMenu = true;
-            }
-		});
-	}
-	$(window).resize(onWindowResize);
-
-
-
 ///////////////HTN////////////////
 	$scope.gotoProfile = function() {
 		$state.go('');
