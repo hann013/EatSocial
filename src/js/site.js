@@ -1,6 +1,6 @@
 
 
-var site = angular.module('site', ['ui.router']);
+var site = angular.module('site', ['ui.router', 'firebase']);
 
 site.config(function($stateProvider, $urlRouterProvider) {
 
@@ -23,7 +23,8 @@ site.config(function($stateProvider, $urlRouterProvider) {
 
     $stateProvider.state('home', {
     	url: '/',
-    	templateUrl: 'views/home.html'
+    	templateUrl: 'views/home.html',
+    	controller: 'LoginController'
     })
     .state('results', {
     	url: '/results',
@@ -155,4 +156,56 @@ site.controller('siteCtrl', ['$scope', '$window', function($scope, $window) {
 
 }]);
 
+site.controller("FirebaseController", ["$scope", "$firebaseObject", 
+	function($scope, $firebaseObject) {
+		var ref = firebase.database().ref();
+		var obj = $firebaseObject(ref);
 
+		// to take an action after the data loads, use the $loaded() promise
+	    obj.$loaded().then(function() {
+	        console.log("loaded record:", obj.$id, obj.someOtherKeyInData);
+
+	        // To iterate the key/value pairs of the object, use angular.forEach()
+	        angular.forEach(obj, function(value, key) {
+	            console.log(key, value);
+	        });
+	    });
+
+	     // To make the data available in the DOM, assign it to $scope
+	     $scope.firebase = obj;
+
+	     // For three-way data bindings, bind it to the scope instead
+	     obj.$bindTo($scope, "firebase");
+	}
+]);
+
+site.controller("LoginController", ["$scope", "$firebaseAuth", "$firebaseArray",
+	function($scope, $firebaseAuth, $firebaseArray) {
+		// OAuth login
+		$scope.login = function(oauthProvider) {		
+			$firebaseAuth().$signInWithPopup(oauthProvider).then(function(userData) {	
+				var userId = userData.user.uid;
+				var userName = userData.user.displayName;
+
+				console.log("User ID: " + userId);
+
+				var userRef = firebase.database().ref('users/' + userId);
+
+				userRef.once("value").then(function(user) {
+					// save new user 
+					if (!user.exists()) {
+						var newUser = { displayName : userName };
+
+						userRef.set(newUser, function() {
+							console.log("New user " + userName + " added");
+						});
+					} else {
+						console.log("User already exists");
+					}
+				});
+			}).catch(function(error) {
+				console.error("Authentication failed:", error);
+			});
+		}
+	}
+]);

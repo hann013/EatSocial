@@ -1,47 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-	<!-- <script scr="angular-ui-router.min.js"></script> -->
-	<script src="http://angular-ui.github.io/ui-router/release/angular-ui-router.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="dist/css/style.css">	
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
+		<!-- <script scr="angular-ui-router.min.js"></script> -->
+		<script src="http://angular-ui.github.io/ui-router/release/angular-ui-router.min.js"></script>
 
-	<title>Crave</title>
+		<!-- Firebase -->
+		<script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
 
-	<script src="dist/js/site.js"></script>
-</head>
+		<script>
+			// Initialize Firebase
+			var config = {
+			apiKey: "AIzaSyBH-FNy97qgaCWLmIUgk7ikZ-hBPeJKyoI",
+			authDomain: "crave-3dfef.firebaseapp.com",
+			databaseURL: "https://crave-3dfef.firebaseio.com",
+			storageBucket: "crave-3dfef.appspot.com",
+			messagingSenderId: "889441604016"
+			};
+			firebase.initializeApp(config);
+		</script>
 
+		<!-- AngularFire -->
+		<script src="https://cdn.firebase.com/libs/angularfire/2.0.2/angularfire.min.js"></script>
 
-<body ng-app="site" ng-controller = "siteCtrl">
+		<link rel="stylesheet" type="text/css" href="dist/css/style.css">	
 
+		<title>Crave</title>
 
-
-	<div ui-view></div>
-
-	
-
-
-
-<!-- 
-<footer>
-	<div class="contact-info">
-		<ul>
-			<li><img class="contact-icon" src="images/email.png"> EMAIL</li>
-			<li>GitHub</li>
-			<li>LinkedIn</li>
-			<li>Facebook</li>
-		</ul>
+		<script src="src/js/site.js"></script>
+	</head>
 
 
-	</div>
-	
+	<body ng-app="site" ng-controller = "siteCtrl">
 
-</footer> -->
-</body>
+
+
+		<div ui-view></div>
+
+		
+
+
+
+	<!-- 
+	<footer>
+		<div class="contact-info">
+			<ul>
+				<li><img class="contact-icon" src="images/email.png"> EMAIL</li>
+				<li>GitHub</li>
+				<li>LinkedIn</li>
+				<li>Facebook</li>
+			</ul>
+
+
+		</div>
+		
+
+	</footer> -->
+	</body>
 </html>
