@@ -1,6 +1,6 @@
 
 
-var site = angular.module('site', ['ui.router', 'firebase']);
+var site = angular.module('site', ['ui.router', 'circle.countdown', 'firebase']);
 
 site.config(function($stateProvider, $urlRouterProvider) {
 
@@ -33,6 +33,10 @@ site.config(function($stateProvider, $urlRouterProvider) {
     .state('profile', {
     	url: '/profile',
     	templateUrl: 'views/profile.html'
+    })
+    .state('countdown', {
+    	url: '/countdown',
+    	templateUrl: 'views/countdown.html'
     });
 
 });
@@ -152,10 +156,12 @@ site.controller("LoginController", ["$scope", "$firebaseAuth", "$firebaseArray",
 	function($scope, $firebaseAuth, $firebaseArray) {
 		// OAuth login
 		$scope.login = function(oauthProvider) {		
-			$firebaseAuth().$signInWithPopup(oauthProvider).then(function(userData) {	
-				var userId = userData.user.uid;
-				var userName = userData.user.displayName;
+			$firebaseAuth().$signInWithPopup(oauthProvider).then(function(userData) {
+				var userInfo = userData.user;	
+				var userId = userInfo.uid;
+				var userName = userInfo.displayName;
 
+				console.log(userData);
 				console.log("User ID: " + userId);
 
 				var userRef = firebase.database().ref('users/' + userId);
@@ -163,7 +169,10 @@ site.controller("LoginController", ["$scope", "$firebaseAuth", "$firebaseArray",
 				userRef.once("value").then(function(user) {
 					// save new user 
 					if (!user.exists()) {
-						var newUser = { displayName : userName };
+						var newUser = { 
+							displayName : userName,
+							photoUrl : userInfo.photoURL
+						};
 
 						userRef.set(newUser, function() {
 							console.log("New user " + userName + " added");
@@ -176,5 +185,37 @@ site.controller("LoginController", ["$scope", "$firebaseAuth", "$firebaseArray",
 				console.error("Authentication failed:", error);
 			});
 		}
+	}
+]);
+
+site.controller("SearchController", ["$scope", "$firebaseArray", 
+	function($scope, $firebaseArray) {
+		$scope.submit = function() {
+			// get current location
+			if (navigator.geolocation) {
+	        	navigator.geolocation.getCurrentPosition(saveSearch);
+		    } else {
+		        console.log("Error: couldn't get current location");
+		    }
+		}
+
+		function saveSearch(position) {
+    		var coords = [position.coords.latitude, position.coords.longitude];
+    		
+    		// store search in the database
+    		var user = $scope.authObj.$getAuth();
+			var activeRef = firebase.database().ref('active-searches');
+
+			$scope.active = $firebaseArray(activeRef);
+			$scope.active.$add({
+				userId : user.uid,
+				numPeople: 1,
+				location: coords
+			});
+
+			$scope.active.$watch("child_added", function(event) {
+			  	console.log(event);
+			});
+    	}
 	}
 ]);
