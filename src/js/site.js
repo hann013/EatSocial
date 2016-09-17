@@ -58,8 +58,6 @@ site.controller('siteCtrl', ['$scope', '$window', '$state', function($scope, $wi
 
 
 	$(document).ready(function() {
-		// $scope.currSection = $scope.sectionInfo.home;
-		onWindowResize();
 
 		$scope.showSignIn = false;
 		$scope.showRegister = false;
