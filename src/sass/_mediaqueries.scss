@@ -1,0 +1,77 @@
+
+/*------------------------------------*\
+    Media Queries
+\*------------------------------------*/
+
+/*
+ * Defining the break points and media queries mixin
+ *
+ * Breakpoint Variables
+ * Media Query Mixin
+ */
+
+
+
+
+
+// ---------- Breakpoint Variables ---------
+
+$mobile-start:      320px;
+$tablet-start:      720px;
+$desk-start:        1024px;
+
+$smallest-end:      $mobile-start -1px;
+$mobile-end:        $tablet-start - 1px;
+$tablet-end:        $desk-start - 1px;
+
+
+
+
+
+
+// ---------- Media Query Mixin ---------
+// usage: @include media-query(tablet-and-up) { ...content... }
+// Breakpoints:
+//    - mobile (up to mobile breakpoint)
+//    - tablet (up to tablet breakpoint)
+//    - tablet-only
+//    - tablet-and-up
+//    - desk (desktop breakpoint and up)
+
+@mixin media-query($media-query) {
+
+    // small mobile only breakpoint
+    @if $media-query == small-mobile {
+        @media only screen and (max-width:$tablet-end) { @content; }
+    }
+
+    // large mobile only breakpoint
+    @if $media-query == large-mobile {
+        @media only screen and (min-width:$smallest-end) and (max-width:$mobile-end) { @content; }
+    }
+
+    // mobile breakpoint
+    @if $media-query == mobile {
+        @media only screen and (max-width:$mobile-end) { @content; }
+    }
+
+    // mobile + tablet breakpoint
+    @if $media-query == tablet {
+        @media only screen and (max-width:$tablet-end) { @content; }
+    }
+
+    // tablet only breakpoint
+    @if $media-query == tablet-only {
+        @media only screen and (min-width:$tablet-start) and (max-width:$tablet-end) { @content; }
+    }
+
+    // tablet + desktop breakpoint
+    @if $media-query == tablet-and-up {
+        @media only screen and (min-width:$tablet-start) { @content; }
+    }
+
+    // desktop only breakpoint
+    @if $media-query == desk {
+        @media only screen and (min-width:$desk-start) { @content; }
+    }
+}

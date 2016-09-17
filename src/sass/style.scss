@@ -1,0 +1,54 @@
+
+@import 'reset';
+/*@import 'mediaqueries.scss';*/
+
+/* VARIABLES */
+$purple-0: #f2e6ff;
+$purple-1: #e5ccff;
+
+
+$white:   #ffffff;
+$black:   #000000;
+$grey:    #9C9C9C;
+$gold:    #FFBC52;
+
+$pink-6:  rgba(241, 176, 233, 0.6);
+$pink-8:  rgba(241, 176, 233, 0.8);
+$grey-5:  rgba(1, 1, 1, 0.5);
+$grey-8:  rgba(1, 1, 1, 0.8);
+
+$max-contw: 1200px;
+$max-conth: 1000px;
+
+
+/* TYPOGRAPHY */
+text, h1, h2, h3, h4, p, a {
+  font-family: sans-serif;
+}
+
+h1 {
+  font-size: 3em;
+  font-weight: 400;
+}
+
+
+/* MAIN STYLES */
+body {
+  background-color: white;
+  /*color: navy;*/
+  margin: 0 auto;
+  clear: both;
+  width: 100%;
+}
+
+a {
+  text-decoration: none;
+
+}
+
+
+
+
+
+
+
