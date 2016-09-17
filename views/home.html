@@ -1,17 +1,41 @@
 <section id='home' class="flood-section">
-	<div class="flood-container">
-		<div class="banner">
-			<div class="banner-text">
-				<h1 class="banner-title">What are you craving today?</h1>
-			</div>
-			<div class="banner-search">
-				<form>
-					<input type="text" name="keywords" placeholder="Enter here:">
-				</form>
-			</div>
-			<div class="login" ng-controller="LoginController">
-				<button id="login" ng-click="login('google')">Login</button>
-			</div>
-		</div>			
+
+	<!-- <div ng-click="showSignIn = true">Sign In</div> -->
+	<div ng-hide="showSignIn || signedIn"  ng-controller="LoginController">
+		<div id="login" class="btn sign-in-btn"  ng-click="login('google')">Login</div>
 	</div>
+
+	<div ng-show="signedIn" class="btn">{{user.username}}</div>
+
+
+	<div ng-show="showSignIn" class="sign-in-container">
+		<svg ng-click="showSignIn = false" class="close-btn" viewbox="0 0 40 40">
+    		<path class="close-x" d="M 10,10 L 30,30 M 30,10 L 10,30" />
+  		</svg>
+		<h4>Sign in to your account.</h4>
+		<form class="sign-in-form">
+			<input type="text" ng-model="user.username" placeholder="Username:">
+			<input type="text" ng-model="user.password" placeholder="Password:">
+			<div class="col-container">
+				<div class="col col-50">
+					<div class="btn" ng-click="signin()"> Sign In </div>
+				</div>
+				<div class="col col-50">
+					<div class="btn" ng-click="register()"> Register </div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div class="banner">
+		<div class="banner-text">
+			<h1 class="banner-title">What are you craving today?</h1>
+		</div>
+		<div class="banner-search">
+			<form>
+				<input type="text" name="keywords" placeholder="Enter here:">
+			</form>
+		</div>	
+	</div>
+
 </section>

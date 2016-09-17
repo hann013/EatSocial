@@ -23,11 +23,11 @@ $max-conth: 1000px;
 
 /* TYPOGRAPHY */
 text, h1, h2, h3, h4, p, a {
-  font-family: sans-serif;
+  font-family: "Courier New", Courier, monospace;
 }
 
 h1 {
-  font-size: 3em;
+  font-size: 2em;
   font-weight: 400;
 }
 
@@ -43,12 +43,113 @@ body {
 
 a {
   text-decoration: none;
+}
 
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}
+
+.col-container {
+  clear: both;
+  float: none;
+  margin: auto;
+}
+
+.col {
+  float: left;
+  margin: auto;
+}
+
+.col-50 {
+  width: 50%;
 }
 
 
+.flood-section {
+  width: 100vw;
+  height: 100vh;
+  background: url("/images/food.jpeg") no-repeat;
+  background-position: center center;
+  background-size: cover;
+  overflow: hidden;
+}
+
+.btn {
+  height: 2.5em;
+  border: $white solid;
+  color: $white;
+  border-radius: 30px;
+  padding: 9px 15px;
+  &:hover {
+    background-color: $grey;
+  }
+}
 
 
+.sign-in-btn {
+  float: right;
+  margin: 5px;
+}
 
+.sign-in-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.8);
 
+}
 
+.sign-in-form {
+
+  width: 80%;
+  margin: auto;
+
+  input {
+    width: 100%;
+    height: 3em;
+    margin: 15px auto 0 auto;
+    border: $grey solid 2px;
+    border-radius: 30px;
+    padding: 15px;
+  }  
+}
+
+.banner {
+  width: 90%;
+  margin: 200px auto 0 auto;
+  text-align: center;
+
+}
+
+.banner-text {
+  color: white;
+}
+
+.banner-search {
+  input[type="text"] {
+    width: 75%;
+    height: 3em;
+    border: none;
+    border-radius: 30px;
+    padding: 0 15px;
+  }
+}
+
+.close-btn {
+  width: 30px;
+  float: right;
+
+  &:hover {
+    background-color: $grey;
+    border-radius: 50%;
+  }
+}
+
+.close-x {
+  stroke: black;
+  fill: transparent;
+  stroke-linecap: round;
+  stroke-width: 5;
+}

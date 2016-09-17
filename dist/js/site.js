@@ -47,50 +47,8 @@ site.config(function($stateProvider, $urlRouterProvider) {
 //				OLD STUFF FROM MY WEBSITE
 ///////////////////////////////////////////////////////////////
 
-site.controller('siteCtrl', ['$scope', '$window', function($scope, $window) {
+site.controller('siteCtrl', ['$scope', '$window', '$state', function($scope, $window, $state) {
 	
-	$scope.sectionList = ['home', 'about', 'work', 'school', 'hobbies', 'contact'];
-	$scope.sectionInfo = {'home': {'name': 'home', 'title': 'Welcome!',
-						  'description': 'This is Elena\'s website. [insert cool description here]'},
-						'about': {'name': 'about', 'title': 'A little about me',
-						  'description': '[insert some description here]'},
-						'work': {'name': 'work', 'title': 'My technical work',
-						  'description': 'From hardware hacks to front-end development, follow me through my technical works.[insert some description here]'},
-						'school': {'name': 'school', 'title': 'My school',
-						  'description': '[insert some description here]'},
-						'hobbies': {'name': 'hobbies', 'title': 'What I love',
-						  'description': '[insert some description here]'},
-						'contact': {'name': 'contact', 'title': 'Get in touch',
-						  'description': ''}
-						};
-
-
-
-	$scope.projectList = {'Website':{'name': 'Portfolio Site',
-							'img':'images/butterfly_logo.svg',
-							'technology':['HTML', 'CSS', 'JS', 'AngularJS'],
-							'description':'my personal website and online portfolio'},
-						'Nascent':{'name': 'Nascent',
-							'img':'images/nascent.jpg',
-							'technology':['HTML','CSS','JS','AngularJS','.NET'],
-							'description':'first coop term'},
-						'Nascent1':{'name': 'Nascent',
-							'img':'images/nascent.jpg',
-							'technology':['HTML','CSS','JS','AngularJS','.NET'],
-							'description':'first coop term'},
-						'Nascent2':{'name': 'Nascent',
-							'img':'images/nascent.jpg',
-							'technology':['HTML','CSS','JS','AngularJS','.NET'],
-							'description':'first coop term'},
-						'Nascent3':{'name': 'Nascent',
-							'img':'images/nascent.jpg',
-							'technology':['HTML','CSS','JS','AngularJS','.NET'],
-							'description':'first coop term'},
-						'Nascent4':{'name': 'Nascent',
-							'img':'images/nascent.jpg',
-							'technology':['HTML','CSS','JS','AngularJS','.NET'],
-							'description':'first coop term'}
-						};
 
 
 
@@ -101,12 +59,12 @@ site.controller('siteCtrl', ['$scope', '$window', function($scope, $window) {
 	// 		scrollTop: $(toSection).offset().top - $('.nav-bar').height()}, 500);
 	// }
 
-	$scope.goTo = function(toSection) {
-		$scope.currSection = toSection;
-		if (!$scope.desk){
-			$scope.showMenu = false;
-		}
-	}
+	// $scope.goTo = function(toSection) {
+	// 	$scope.currSection = toSection;
+	// 	if (!$scope.desk){
+	// 		$scope.showMenu = false;
+	// 	}
+	// }
 
 	$scope.showNavMenu = function() {
 		console.log("toggling menu");
@@ -146,9 +104,19 @@ site.controller('siteCtrl', ['$scope', '$window', function($scope, $window) {
 	$(window).resize(onWindowResize);
 
 
+
+///////////////HTN////////////////
+	$scope.gotoProfile = function() {
+		$state.go('');
+	}
+
+
 	$(document).ready(function() {
-		$scope.currSection = $scope.sectionInfo.home;
+		// $scope.currSection = $scope.sectionInfo.home;
 		onWindowResize();
+
+		$scope.showSignIn = false;
+		$scope.signedIn = false;
 	});
 
 
