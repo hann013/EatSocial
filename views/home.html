@@ -31,9 +31,11 @@
 
 	<div ng-show="showRegister" class="banner user-form">
 		<form>
-			<input class="mid-col" type="email" ng-model="user.email" placeholder="Email:">
-			<input class="mid-col" type="password" ng-model="user.password" placeholder="Password:">
-			<input class="mid-col" type="password" ng-model="user.password2" placeholder="Confirm Password:">
+			<input class="mid-col" type="text" ng-model="user.first" placeholder="First Name:" required>
+			<input class="mid-col" type="text" ng-model="user.last" placeholder="Last Name:" required>
+			<input class="mid-col" type="email" ng-model="user.email" placeholder="Email:" required>
+			<input class="mid-col" type="password" ng-model="user.password" placeholder="Password:" required>
+			<input class="mid-col" type="password" ng-model="user.password2" placeholder="Confirm Password:" required>
 			<div class="col-container">
 				<div class="col col-50">
 					<div class="btn mid-col" ng-click="showRegister = false"> Back </div>

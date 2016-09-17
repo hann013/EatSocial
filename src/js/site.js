@@ -1,6 +1,6 @@
 
 
-var site = angular.module('site', ['ui.router', 'circle.countdown', 'firebase']);
+var site = angular.module('site', ['ui.router', 'firebase']);
 
 site.config(function($stateProvider, $urlRouterProvider) {
 
