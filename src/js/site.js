@@ -176,8 +176,8 @@ site.controller("SearchController", ["$scope", "$firebaseAuth", "$firebaseArray"
 
 			var newSearch = {
 				userId: $firebaseAuth().$getAuth().uid,
-				numPeople: 1,
-				maxRadius: 5000,
+				numPeople: $scope.request.people,
+				maxRadius: $scope.request.radius,
 				location: [lat, long]
 			};
 
