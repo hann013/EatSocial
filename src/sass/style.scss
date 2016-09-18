@@ -29,6 +29,8 @@ text, h1, h2, h3, h4, p, a {
 h1 {
   font-size: 2em;
   font-weight: 400;
+  color: white;
+  text-shadow: 2px 0 0 #000, 0 -2px 0 #000, 0 2px 0 #000, -2px 0 0 #000;
 }
 
 
@@ -160,7 +162,7 @@ button:focus {
   float: right;
 
   &:hover {
-    background-color: $grey;
+    background-color: $grey-5;
     border-radius: 50%;
   }
 }

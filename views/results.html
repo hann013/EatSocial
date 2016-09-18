@@ -2,8 +2,11 @@
 
 	<div class="banner user-form">
 		<form name="requestForm">
+            <h1 class="topic">Time Limit</h1>
 			<input class="mid-col" type="number" ng-model="search.waitMins" placeholder="Mins." required>
+            <h1 class="topic">Number of People</h1>
 			<input class="mid-col" type="number" ng-model="search.numPeople" placeholder="People" required>
+            <h1 class="topic">Distance From Current Location</h1>
 			<input class="mid-col" type="number" ng-model="search.maxRadius" placeholder="km radius" required>
 			<div class="btn mid-col" ng-click="submit()" ng-disabled="requestForm.$invalid"> I'm hungry </div>
 		</form>
