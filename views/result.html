@@ -4,7 +4,15 @@
 		<p>You're going to</p>
 		<h1 class="banner-title">{{ bestMatch.name }}</h1>
 		<img ng-src="{{ bestMatch.image_url }}" />
-		<p>Rating: {{ bestMatch.rating }} / 5</p>
+
+		<p>Cuisine:</p>
+		<div ng-repeat="category in bestMatch.categories">
+			<p>{{ category[0] }}</p>
+		</div>
+	
+		<p>Rating:</p>
+		<img ng-src="{{ bestMatch.rating_img_url_large }}" />
+	
 		<p>Address</p>
 		<div ng-repeat="addressInfo in bestMatch.location.display_address | limitTo: 3">
 			<p>{{ addressInfo }}</p>
