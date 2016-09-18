@@ -277,6 +277,9 @@ site.controller("CountdownController", ["$scope", "$state", "MatchDetails",
 					secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
 
 					if (t.total <= 0) {
+						$scope.$apply(function() {
+							$scope.sorry = true;
+						});
 						clearInterval(timeinterval);
 					}
 				}
@@ -285,7 +288,9 @@ site.controller("CountdownController", ["$scope", "$state", "MatchDetails",
 				var timeinterval = setInterval(updateClock, 1000);
 			}
 
-			var deadline = new Date(Date.parse(new Date()) + MatchDetails.getExpireDate() * 60 * 1000);
+			var minsWillWait = (MatchDetails.getExpireDate() <= 0) ? MatchDetails.getExpireDate() : 1;
+			
+			var deadline = new Date(Date.parse(new Date()) + minsWillWait * 60 * 1000);
 			initializeClock('clockdiv', deadline);
 
 
