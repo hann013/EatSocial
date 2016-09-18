@@ -23,7 +23,7 @@ $max-conth: 1000px;
 
 /* TYPOGRAPHY */
 text, h1, h2, h3, h4, p, a {
-  font-family: "Courier New", Courier, monospace;
+  font-family: 'Indie Flower', cursive;
 }
 
 h1 {
@@ -71,7 +71,7 @@ button:focus {
 .flood-section {
   width: 100vw;
   height: 100vh;
-  background: url("/images/basketweave.jpg") no-repeat;
+  background: url("/images/water-drink-glass-drinking.jpg") no-repeat;
   background-position: center center;
   background-size: cover;
   overflow: hidden;
@@ -118,14 +118,6 @@ button:focus {
 }
 
 
-
-
-
-
-
-
-
-
 .sign-in-btn {
   float: right;
   margin: 5px;
@@ -134,7 +126,7 @@ button:focus {
 .sign-in-container {
   width: 100vw;
   height: 100vh;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.5);
 
 }
 
