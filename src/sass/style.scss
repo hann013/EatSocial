@@ -30,7 +30,7 @@ h1 {
   font-size: 2em;
   font-weight: 400;
   color: white;
-  text-shadow: 2px 0 0 #000, 0 -2px 0 #000, 0 2px 0 #000, -2px 0 0 #000;
+  text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
 }
 
 
@@ -121,6 +121,12 @@ button:focus {
   text-align: center;
 
 }
+.banner1 {
+  width: 90%;
+  margin: 200px auto 0 auto;
+  text-align: center;
+  background: rgba(0,0,0,0.4);
+}
 
 .banner-title {
   color: white;
@@ -163,7 +169,7 @@ button:focus {
     font-size: 2em;
   font-weight: 400;
   color: white;
-  text-shadow: 2px 0 0 #000, 0 -2px 0 #000, 0 2px 0 #000, -2px 0 0 #000;
+  text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
     font-family: 'Montserrat', sans-serif;
 }
 
@@ -171,7 +177,7 @@ button:focus {
     font-size: 1.5em;
   font-weight: 400;
   color: white;
-  text-shadow: 2px 0 0 #000, 0 -2px 0 #000, 0 2px 0 #000, -2px 0 0 #000;
+  text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
     font-family: 'Montserrat', sans-serif;
 }
 

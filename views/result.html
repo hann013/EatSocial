@@ -1,5 +1,6 @@
 <section id='result' class="flood-section">
-	<div class="banner">
+	<div class="banner1">
+    </br>
 		<p class="res">You're going to:</p>
 		<h1 class="res">{{ bestMatch.name }}</h1>
         </br>
@@ -16,5 +17,6 @@
 		<div ng-repeat="addressInfo in bestMatch.location.display_address | limitTo: 3">
 			<p class="res">{{ addressInfo }}</p>
 		</div>
+</br>
 	</div>
 </section>
