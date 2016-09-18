@@ -1,21 +1,21 @@
 <section id='countdown' class="flood-section">
 
-	<div>
-		<p>You're going to</p>
-		<h1 class="banner-title">{{ bestMatch.name }}</h1>
+	<div class="banner">
+		<p class="res">You're going to:</p>
+		<h1 class="res">{{ bestMatch.name }}</h1>
+        </br>
 		<img ng-src="{{ bestMatch.image_url }}" />
-
-		<p>Cuisine:</p>
+    </br>
+		<p class="res">Cuisine:</p>   
 		<div ng-repeat="category in bestMatch.categories">
-			<p>{{ category[0] }}</p>
+			<p class="res1">{{ category[0] }}</p>
 		</div>
-	
-		<p>Rating:</p>
-		<img ng-src="{{ bestMatch.rating_img_url_large }}" />
-	
-		<p>Address</p>
+</br>
+        <p class="res"> Rating: <img ng-src="{{ bestMatch.rating_img_url_large }}" /></p>
+</br>
+		<p class = "res">Address:</p>
 		<div ng-repeat="addressInfo in bestMatch.location.display_address | limitTo: 3">
-			<p>{{ addressInfo }}</p>
+			<p class="res">{{ addressInfo }}</p>
 		</div>
 	</div>
 
