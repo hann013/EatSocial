@@ -85,6 +85,8 @@ button:focus {
   border-radius: 30px;
   padding: 8px 15px;
   margin: 20px auto;*/
+  border: $white solid;
+  color: $white;
   margin: 20px auto;
   &:hover {
     background-color: $grey;
@@ -93,9 +95,6 @@ button:focus {
 
 .mid-col {
   width: 70%;
-  height: 2.5em;
-  border: $white solid;
-  color: $white;
   border-radius: 30px;
   padding: 8px 15px;
 }
@@ -103,6 +102,7 @@ button:focus {
 .user-form {
   input {
     margin-bottom: 10px;
+    border: none;
   }
 }
 
