@@ -23,7 +23,7 @@ $max-conth: 1000px;
 
 /* TYPOGRAPHY */
 text, h1, h2, h3, h4, p, a {
-  font-family: 'Indie Flower', cursive;
+  font-family: 'Montserrat', sans-serif;
 }
 
 h1 {
@@ -97,14 +97,15 @@ button:focus {
 }
 
 .temp{
-  font-family: 'Indie Flower', cursive;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .mid-col {
   width: 70%;
   border-radius: 30px;
   padding: 8px 15px;
-  font-family: 'Indie Flower', cursive;
+  font-size: 1.5em;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .user-form {
@@ -165,6 +166,15 @@ button:focus {
   text-shadow: 2px 0 0 #000, 0 -2px 0 #000, 0 2px 0 #000, -2px 0 0 #000;
     font-family: 'Montserrat', sans-serif;
 }
+
+.res1{
+    font-size: 1.5em;
+  font-weight: 400;
+  color: white;
+  text-shadow: 2px 0 0 #000, 0 -2px 0 #000, 0 2px 0 #000, -2px 0 0 #000;
+    font-family: 'Montserrat', sans-serif;
+}
+
 
 //CLOCK - from codepen
 #clockdiv{
