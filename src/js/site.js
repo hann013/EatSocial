@@ -113,8 +113,8 @@ site.controller("LoginController", ["$scope", "$state", "$firebaseAuth", "$fireb
 	}
 ]);
 
-site.controller("SearchController", ["$scope", "$state", "$firebaseAuth", "$firebaseArray", "MatchDetails", 
-	function($scope, $state, $firebaseAuth, $firebaseArray, MatchDetails) {
+site.controller("SearchController", ["$scope", "$state", "$firebaseAuth", "$firebaseArray", "MatchDetails", "SearchDetails", 
+	function($scope, $state, $firebaseAuth, $firebaseArray, MatchDetails, SearchDetails) {
 		var searchesRef = firebase.database().ref('active-searches');
 		$scope.searches = $firebaseArray(searchesRef);
 
@@ -167,6 +167,8 @@ site.controller("SearchController", ["$scope", "$state", "$firebaseAuth", "$fire
 					expireDate: $scope.search.waitMins
 				}
 
+				console.log("BestMatch id: " + newMatch.activeId);
+
 				// Save match details
 				MatchDetails.setData(newMatch);
 
@@ -191,111 +193,168 @@ site.controller("SearchController", ["$scope", "$state", "$firebaseAuth", "$fire
 		}
 
 		function saveSearch(lat, long) {
+			var id = $firebaseAuth().$getAuth().uid;
+
     		// store search in the database
 			var newSearch = {
-				userId: $firebaseAuth().$getAuth().uid,
+				userId: id,
 				numPeople: $scope.search.numPeople,
 				maxRadius: $scope.search.maxRadius,
 				location: [lat, long]
 			};
 
-			searchesRef.push(newSearch, function() {
-				console.log("Added search");
-			});
+			var newKey = searchesRef.push(newSearch).getKey();
+
+			// save search details
+			SearchDetails.setActiveId(newKey);
+			SearchDetails.setWaitTime($scope.search.waitMins);
+
+			// go to countdown page
+			$state.go("countdown");
     	}
+	}
+]);
+
+site.controller("CountdownController", ["$scope", "$state", "$firebaseArray", "MatchDetails", "SearchDetails",
+	function($scope, $state, $firebaseArray, MatchDetails, SearchDetails){
+		// listen for active matches updates
+		var matchesRef = firebase.database().ref('active-matches'); 
+		var matches = $firebaseArray(matchesRef);
+		
+		matches.$watch(function(event) {
+			console.log(event);
+			if (event.event == "child_added") {
+				if (matches.$getRecord(event.key).activeId == SearchDetails.getActiveId()) {
+					console.log("found match");
+
+					// set match key and redirect to results
+					console.log(event.key);
+					MatchDetails.setMatchKey(event.key);
+
+					$state.go("result");
+				}
+			}
+		});	
+
+		function getTimeRemaining(endtime) {
+			var t = Date.parse(endtime) - Date.parse(new Date());
+			var seconds = Math.floor((t / 1000) % 60);
+			var minutes = Math.floor((t / 1000 / 60) % 60);
+			var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+			var days = Math.floor(t / (1000 * 60 * 60 * 24));
+			return {
+				'total': t,
+				'days': days,
+				'hours': hours,
+				'minutes': minutes,
+				'seconds': seconds
+			};
+		}
+
+		function initializeClock(id, endtime) {
+			var clock = document.getElementById(id);
+			var minutesSpan = clock.querySelector('.minutes');
+			var secondsSpan = clock.querySelector('.seconds');
+
+			function updateClock() {
+				var t = getTimeRemaining(endtime);
+
+				minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
+				secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+
+				if (t.total <= 0) {
+					$scope.$apply(function() {
+						$scope.sorry = true;
+					});
+					clearInterval(timeinterval);
+				}
+			}
+
+			updateClock();
+			var timeinterval = setInterval(updateClock, 1000);
+		}
+
+		var minsWillWait = (SearchDetails.getWaitTime() > 0) ? SearchDetails.getWaitTime() : 10;
+		
+		var deadline = new Date(Date.parse(new Date()) + minsWillWait * 60 * 1000);
+		initializeClock('clockdiv', deadline);
 	}
 ]);
 
 site.controller("ResultController", ["$scope", "$firebaseArray", "MatchDetails", "YelpService",
 	function($scope, $firebaseArray, MatchDetails, YelpService) {
-		// get best Yelp match
-		YelpService.searchYelp(MatchDetails.getLatitude(), MatchDetails.getLongitude(), MatchDetails.getMaxRadius(), function(data) {
-			console.log("Got Yelp results");
+		if (MatchDetails.getMatchKey() != null) {
+			var matchRef = firebase.database().ref('active-matches/' + MatchDetails.getMatchKey()); 
+			matchRef.once('value', function(snapshot) {
+			  	$scope.bestMatch = snapshot.val();
 
-			if (data.businesses.length > 0) {
-				$scope.bestMatch = data.businesses[0];
+			});
+			
+			// delete match
+			matchRef.remove(); 		
+		} else {
+			// get best Yelp match
+			YelpService.searchYelp(MatchDetails.getLatitude(), MatchDetails.getLongitude(), MatchDetails.getMaxRadius(), function(data) {
+				console.log("Got Yelp results");
 
-				$scope.bestMatch.activeId = MatchDetails.getActiveId();
+				if (data.businesses.length > 0) {
+					$scope.bestMatch = data.businesses[0];
 
-				// Delete active search
-				deleteSearch(MatchDetails.getActiveId());
+					$scope.bestMatch.activeId = MatchDetails.getActiveId();
 
-				// Set active match in database
-				addMatch($scope.bestMatch);
+					// Delete active search
+					deleteSearch(MatchDetails.getActiveId());
 
-				console.log($scope.bestMatch);
+					// Set active match in database
+					addMatch($scope.bestMatch);
+
+					console.log($scope.bestMatch);
+				}
+			});
+
+			function deleteSearch(id) {
+				var searchesRef = firebase.database().ref('active-searches');
+				$scope.searches = $firebaseArray(searchesRef);
+
+				if ($scope.searches.length > 0) {
+					$scope.searches.$remove($scope.searches.$getRecord(id)).then(function() {
+						console.log("Removed by ID");
+					});
+				}
 			}
-		});
 
-		function deleteSearch(id) {
-			var searchesRef = firebase.database().ref('active-searches');
-			$scope.searches = $firebaseArray(searchesRef);
-
-			if ($scope.searches.length > 0) {
-				$scope.searches.$remove($scope.searches.$getRecord(id)).then(function() {
-					console.log("Removed by ID");
+			function addMatch(bestMatch) {
+				var matchesRef = firebase.database().ref('active-matches'); 
+				matchesRef.push(bestMatch, function() {
+					console.log("Added match");
 				});
 			}
 		}
+	}
+]);
 
-		function addMatch(bestMatch) {
-			var matchesRef = firebase.database().ref('active-matches'); 
-			matchesRef.push(bestMatch, function() {
-				console.log("Added match");
-			});
+site.service("SearchDetails", function() {
+	var waitMins;
+	var activeId;
+
+	return {
+		getWaitTime: function() {
+			return waitMins;
+		},
+
+		setWaitTime: function(mins) {
+			waitMins = mins;
+		},
+
+		getActiveId: function() {
+			return activeId;
+		},
+
+		setActiveId: function(id) {
+			activeId = id;
 		}
 	}
-]);
-
-site.controller("CountdownController", ["$scope", "$state", "MatchDetails",
-	function($scope, $state, MatchDetails){
-
-		function getTimeRemaining(endtime) {
-			  var t = Date.parse(endtime) - Date.parse(new Date());
-			  var seconds = Math.floor((t / 1000) % 60);
-			  var minutes = Math.floor((t / 1000 / 60) % 60);
-			  var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
-			  var days = Math.floor(t / (1000 * 60 * 60 * 24));
-			  return {
-			    'total': t,
-			    'days': days,
-			    'hours': hours,
-			    'minutes': minutes,
-			    'seconds': seconds
-			  };
-			}
-
-			function initializeClock(id, endtime) {
-				var clock = document.getElementById(id);
-				var minutesSpan = clock.querySelector('.minutes');
-				var secondsSpan = clock.querySelector('.seconds');
-
-				function updateClock() {
-					var t = getTimeRemaining(endtime);
-
-					minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
-					secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
-
-					if (t.total <= 0) {
-						$scope.$apply(function() {
-							$scope.sorry = true;
-						});
-						clearInterval(timeinterval);
-					}
-				}
-
-				updateClock();
-				var timeinterval = setInterval(updateClock, 1000);
-			}
-
-			var minsWillWait = (MatchDetails.getExpireDate() <= 0) ? MatchDetails.getExpireDate() : 1;
-			
-			var deadline = new Date(Date.parse(new Date()) + minsWillWait * 60 * 1000);
-			initializeClock('clockdiv', deadline);
-
-
-	}
-]);
+});
 
 site.service("MatchDetails", function() {
 	var latitude;
@@ -303,6 +362,7 @@ site.service("MatchDetails", function() {
 	var maxRadius;
 	var activeId;
 	var expireDate;
+	var matchKey;
 
 	return {
 		getLatitude: function() {
@@ -325,12 +385,24 @@ site.service("MatchDetails", function() {
 			return expireDate;
 		},
 
+		setActiveId: function(id) {
+			activeId = id;
+		},
+
 		setData: function(newMatch) {
 			latitude = newMatch.latitude;
 			longitude = newMatch.longitude;
 			maxRadius = newMatch.maxRadius;
 			activeId = newMatch.activeId;
 			expireDate = newMatch.expireDate;
+		},
+
+		getMatchKey: function() {
+			return matchKey;
+		},
+
+		setMatchKey: function(key) {
+			matchKey = key;
 		}
 	} 
 });
