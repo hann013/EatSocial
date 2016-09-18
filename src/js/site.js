@@ -28,7 +28,8 @@ site.config(function($stateProvider, $urlRouterProvider) {
     })
     .state('results', {
     	url: '/results',
-    	templateUrl: 'views/results.html'
+    	templateUrl: 'views/results.html',
+    	controller: 'SearchController'
     })
     .state('profile', {
     	url: '/profile',
@@ -59,8 +60,8 @@ site.controller('siteCtrl', ['$scope', '$window', '$state', function($scope, $wi
 
 	$(document).ready(function() {
 
-		$scope.showSignIn = false;
-		$scope.showRegister = false;
+		// $scope.showSignIn = false;
+		// $scope.showRegister = false;
 		// $scope.signedIn = false;
 	});
 
@@ -91,8 +92,8 @@ site.controller("FirebaseController", ["$scope", "$firebaseObject",
 	}
 ]);
 
-site.controller("LoginController", ["$scope", "$firebaseAuth", "$firebaseArray",
-	function($scope, $firebaseAuth, $firebaseArray) {
+site.controller("LoginController", ["$scope", "$firebaseAuth", "$firebaseArray", "$state",
+	function($scope, $firebaseAuth, $firebaseArray, $state) {
 		// OAuth login
 		$scope.login = function(oauthProvider) {		
 			$firebaseAuth().$signInWithPopup(oauthProvider).then(function(userData) {
@@ -118,7 +119,9 @@ site.controller("LoginController", ["$scope", "$firebaseAuth", "$firebaseArray",
 						});
 					} else {
 						console.log("User already exists");
+						$state.go('results');
 					}
+					$state.go('results');
 				});
 			}).catch(function(error) {
 				console.error("Authentication failed:", error);

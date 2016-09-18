@@ -2,17 +2,17 @@
 
 
 
-	<div ng-show="(showSignIn == false) && (showRegister == false)" class="banner">
+	<div class="banner">
 		<h1 class="banner-title">TITLE goes here</h1>
-		<div class="btn mid-col" ng-click="showSignIn = true; showRegister = false"> Sign In </div>
-		<div class="btn mid-col" ng-click="showRegister = true; showSignIn = false"> Register </div>
+		<div class="btn mid-col" ng-click="login('google')"> Sign In </div>
+		<div class="btn mid-col" ng-click="login('google')"> Register </div>
 	</div>
 
 
 
 
-
-
+<!-- Custom Forms -->
+<!-- 
 	<div ng-show="showSignIn" class="banner user-form">
 		<form>
 			<input class="mid-col" type="email" ng-model="user.email" placeholder="Email:">
@@ -45,6 +45,8 @@
 				</div>
 			</div>
 		</form>
-	</div>
+	</div> -->
+
+
 
 </section>
