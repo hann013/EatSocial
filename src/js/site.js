@@ -190,31 +190,56 @@ site.controller("LoginController", ["$scope", "$firebaseAuth", "$firebaseArray",
 
 site.controller("SearchController", ["$scope", "$firebaseAuth", "$firebaseArray", 
 	function($scope, $firebaseAuth, $firebaseArray) {
+		var activeRef = firebase.database().ref('active-searches');
+		$scope.active = $firebaseArray(activeRef);
+
 		$scope.submit = function() {
 			// get current location
 			if (navigator.geolocation) {
 				console.log("Has geolocation");
-	        	navigator.geolocation.getCurrentPosition(saveSearch);
+	        	navigator.geolocation.getCurrentPosition(compareActiveSearches);
 		    } else {
 		        console.log("Error: couldn't get current location");
 		    }
 		}
 
-		function compareActiveSearches() {
-			console.log($scope.active);
+		function compareActiveSearches(position) {
+			var active = $scope.active;
+			
+			console.log(active);
+
+			for(i = 0; i < active.length; i++) {
+				var cLat = position.coords.latitude;
+				var cLon = position.coords.longitude;
+
+				calculateDistance(cLat, cLon, active[i].location[0], active[i].location[1]);
+			}
+
+			saveSearch(cLat, cLon);
 		}
 
-		function saveSearch(position) {
-    		var coords = [position.coords.latitude, position.coords.longitude];
-			console.log(coords);
+		function calculateDistance(lat1, lon1, lat2, lon2) {
+			var R = 6371e3; // metres
+		    var φ1 = lat1 * Math.PI / 180;
+		    var φ2 = lat2 * Math.PI / 180;
+		    var Δφ = (lat2 - lat1) * Math.PI / 180;
+		    var Δλ = (lon2 - lon1) * Math.PI / 180;
 
+		    var a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+		    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+		    console.log(R * c);
+		}
+
+		function saveSearch(lat, long) {
     		// store search in the database
 			var activeRef = firebase.database().ref('active-searches');
 
 			var newSearch = {
 				userId: $firebaseAuth().$getAuth().uid,
 				numPeople: 1,
-				location: coords
+				maxRadius: 5000,
+				location: [lat, long]
 			};
 
 			activeRef.push(newSearch, function() {
