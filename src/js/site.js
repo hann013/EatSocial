@@ -107,8 +107,8 @@ site.controller("LoginController", ["$scope", "$firebaseAuth", "$firebaseArray",
 	}
 ]);
 
-site.controller("SearchController", ["$scope", "$firebaseAuth", "$firebaseArray", 
-	function($scope, $firebaseAuth, $firebaseArray) {
+site.controller("SearchController", ["$scope", "$firebaseAuth", "$firebaseArray", "MatchDetails",
+	function($scope, $firebaseAuth, $firebaseArray, MatchDetails) {
 		var activeRef = firebase.database().ref('active-searches');
 		$scope.active = $firebaseArray(activeRef);
 
@@ -136,7 +136,7 @@ site.controller("SearchController", ["$scope", "$firebaseAuth", "$firebaseArray"
 		function compareActiveSearches(position) {
 			var active = $scope.active;
 
-			var minDistanceMatch = null;
+			var bestMatch = null;
 			var minDistance = null;
 
 			// find minimum distance between currently active searches
@@ -149,16 +149,21 @@ site.controller("SearchController", ["$scope", "$firebaseAuth", "$firebaseArray"
 				if (dist <= $scope.search.maxRadius) {
 		        	console.log("Found a match! Distance = " + dist + " < maxRadius = " + $scope.search.maxRadius);
 
-		        	if (minDistanceMatch == null || dist < minDistanceMatch.distance) {
+		        	if (bestMatch == null || dist < bestMatch.distance) {
 		        		console.log("Updated min distance match");
-						minDistanceMatch = active[i]; 
-						minDistanceMatch.distance = dist;
+						bestMatch = active[i]; 
+						bestMatch.distance = dist;
 		        	}
 				}
 			}
 
-			if (minDistanceMatch != null) {
-				// redirect to new page
+			if (bestMatch != null) {
+				// Save match details
+				MatchDetails.setLatitude(bestMatch.location[0]);
+				MatchDetails.setLongitude(bestMatch.location[1]);
+				MatchDetails.setMaxRadius($scope.search.maxRadius);
+
+				// redirect
 			} else {
 	        	console.log("No matches found");
 				saveSearch(cLat, cLon);
@@ -192,3 +197,85 @@ site.controller("SearchController", ["$scope", "$firebaseAuth", "$firebaseArray"
     	}
 	}
 ]);
+
+site.controller("MatchController", ["$scope", "$firebaseAuth", "$firebaseArray", "MatchDetails", "YelpService",
+	function($scope, $firebaseAuth, $firebaseArray, MatchDetails, YelpService) {
+		YelpService.searchYelp(MatchDetails.getLatitude(), MatchDetails.getLongitude(), MatchDetails.getMaxRadius(), function(data) {
+			console.log("done");
+			console.log(data[0]);
+		});
+	}
+]);
+
+site.service("MatchDetails", function() {
+	var latitude;
+	var longitude;
+	var maxRadius;
+
+	return {
+		getLatitude: function() {
+			return latitude;
+		},
+
+		setLatitude: function(lat) {
+			latitude = lat;
+		},
+
+		getLongitude: function() {
+			return longitude;
+		},
+
+		setLongitude: function(long) {
+			longitude = long;
+		},
+
+		getMaxRadius: function() {
+			return maxRadius;
+		},
+
+		setMaxRadius: function(maxRad) {
+			maxRadius = maxRad;
+		}
+	} 
+});
+
+site.factory("YelpService", function($q, $http) {
+	function getNonce() {
+	    var text = "";
+	    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+	    for(var i = 0; i < 32; i++) {
+	        text += possible.charAt(Math.floor(Math.random() * possible.length));
+	    }
+	    return text;
+	}
+
+    return {
+        searchYelp: function(lat, long, maxRadius, callback) {
+        	var deferred = $q.defer();
+
+            var method = 'GET';
+            var url = 'http://api.yelp.com/v2/search';
+        	var params = {
+	            oauth_consumer_key: 'gol1ZEbWq_Zj5CLA1YJbJg',
+	            oauth_token: 'z4519RcSXpdN9g5kIwCJ6G5Iqh1cuC8e',
+	            oauth_signature_method: "HMAC-SHA1",
+	            oauth_timestamp: new Date().getTime(),
+	            oauth_nonce: getNonce(),
+	            ll: lat + ',' + long,
+	            callback: 'angular.callbacks._0',
+	            term: 'food',
+	            radius_filter: maxRadius
+		    };
+
+            var consumerSecret = 'qY__w0zPqYqu0BC6yQ38plyOYtI';
+            var tokenSecret = 'qWmSq31mLiuq9NSqtPnrA7tc_N4';
+            var signature = oauthSignature.generate(method, url, params, consumerSecret, tokenSecret, { encodeSignature: false });
+            params['oauth_signature'] = signature;
+
+            $http.jsonp(url, { params : params }).success(callback);
+
+            return deferred.promise;
+        }
+    }
+});
