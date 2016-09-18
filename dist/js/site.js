@@ -26,9 +26,9 @@ site.config(function($stateProvider, $urlRouterProvider) {
     	templateUrl: 'views/home.html',
     	controller: 'LoginController'
     })
-    .state('results', {
-    	url: '/results',
-    	templateUrl: 'views/results.html',
+    .state('search', {
+    	url: '/search',
+    	templateUrl: 'views/search.html',
     	controller: 'SearchController'
     })
     .state('profile', {
@@ -38,6 +38,11 @@ site.config(function($stateProvider, $urlRouterProvider) {
     .state('countdown', {
     	url: '/countdown',
     	templateUrl: 'views/countdown.html'
+    })
+    .state('result', {
+    	url: '/result',
+    	templateUrl: 'views/result.html',
+    	controller: 'ResultController'
     });
 
 });
@@ -69,8 +74,8 @@ site.controller('siteCtrl', ['$scope', '$window', '$state', function($scope, $wi
 
 }]);
 
-site.controller("LoginController", ["$scope", "$firebaseAuth", "$firebaseArray", "$state",
-	function($scope, $firebaseAuth, $firebaseArray, $state) {
+site.controller("LoginController", ["$scope", "$state", "$firebaseAuth", "$firebaseArray", 
+	function($scope, $state, $firebaseAuth, $firebaseArray) {
 		// OAuth login
 		$scope.login = function(oauthProvider) {		
 			$firebaseAuth().$signInWithPopup(oauthProvider).then(function(userData) {
@@ -96,9 +101,9 @@ site.controller("LoginController", ["$scope", "$firebaseAuth", "$firebaseArray",
 						});
 					} else {
 						console.log("User already exists");
-						$state.go('results');
+						$state.go('search');
 					}
-					$state.go('results');
+					$state.go('search');
 				});
 			}).catch(function(error) {
 				console.error("Authentication failed:", error);
@@ -107,10 +112,10 @@ site.controller("LoginController", ["$scope", "$firebaseAuth", "$firebaseArray",
 	}
 ]);
 
-site.controller("SearchController", ["$scope", "$firebaseAuth", "$firebaseArray", "MatchDetails",
-	function($scope, $firebaseAuth, $firebaseArray, MatchDetails) {
-		var activeRef = firebase.database().ref('active-searches');
-		$scope.active = $firebaseArray(activeRef);
+site.controller("SearchController", ["$scope", "$state", "$firebaseAuth", "$firebaseArray", "MatchDetails", 
+	function($scope, $state, $firebaseAuth, $firebaseArray, MatchDetails) {
+		var searchesRef = firebase.database().ref('active-searches');
+		$scope.searches = $firebaseArray(searchesRef);
 
 		// default fields
 		$scope.search = {
@@ -134,38 +139,45 @@ site.controller("SearchController", ["$scope", "$firebaseAuth", "$firebaseArray"
 		}
 
 		function compareActiveSearches(position) {
-			var active = $scope.active;
+			var searches = $scope.searches;
 
 			var bestMatch = null;
-			var minDistance = null;
 
 			// find minimum distance between currently active searches
-			for(i = 0; i < active.length; i++) {
+			for(i = 0; i < searches.length; i++) {
 				var cLat = position.coords.latitude;
 				var cLon = position.coords.longitude;
 
-				var dist = calculateDistance(cLat, cLon, active[i].location[0], active[i].location[1]);
+				var dist = calculateDistance(cLat, cLon, searches[i].location[0], searches[i].location[1]);
 
 				if (dist <= $scope.search.maxRadius) {
 		        	console.log("Found a match! Distance = " + dist + " < maxRadius = " + $scope.search.maxRadius);
 
 		        	if (bestMatch == null || dist < bestMatch.distance) {
 		        		console.log("Updated min distance match");
-						bestMatch = active[i]; 
+						bestMatch = searches[i]; 
 						bestMatch.distance = dist;
 		        	}
 				}
 			}
 
 			if (bestMatch != null) {
-				// Save match details
-				MatchDetails.setLatitude(bestMatch.location[0]);
-				MatchDetails.setLongitude(bestMatch.location[1]);
-				MatchDetails.setMaxRadius($scope.search.maxRadius);
+				var newMatch = {
+					latitude: bestMatch.location[0],
+					longitude: bestMatch.location[1],
+					maxRadius: $scope.search.maxRadius,
+					activeId: bestMatch.$id
+				}
 
-				// redirect
+				// Save match details
+				MatchDetails.setData(newMatch);
+
+				// go to result page
+				$state.go("result");
 			} else {
 	        	console.log("No matches found");
+
+	        	// save active search
 				saveSearch(cLat, cLon);
 			}
 		}
@@ -182,8 +194,6 @@ site.controller("SearchController", ["$scope", "$firebaseAuth", "$firebaseArray"
 
 		function saveSearch(lat, long) {
     		// store search in the database
-			var activeRef = firebase.database().ref('active-searches');
-
 			var newSearch = {
 				userId: $firebaseAuth().$getAuth().uid,
 				numPeople: $scope.search.numPeople,
@@ -191,19 +201,55 @@ site.controller("SearchController", ["$scope", "$firebaseAuth", "$firebaseArray"
 				location: [lat, long]
 			};
 
-			activeRef.push(newSearch, function() {
+			searchesRef.push(new, function() {
 				console.log("Added search");
 			});
     	}
 	}
 ]);
 
-site.controller("MatchController", ["$scope", "$firebaseAuth", "$firebaseArray", "MatchDetails", "YelpService",
-	function($scope, $firebaseAuth, $firebaseArray, MatchDetails, YelpService) {
+site.controller("ResultController", ["$scope", "$firebaseArray", "MatchDetails", "YelpService",
+	function($scope, $firebaseArray, MatchDetails, YelpService) {
+		// get best Yelp match
 		YelpService.searchYelp(MatchDetails.getLatitude(), MatchDetails.getLongitude(), MatchDetails.getMaxRadius(), function(data) {
-			console.log("done");
-			console.log(data[0]);
+			console.log("Got Yelp results");
+
+			if (data.businesses.length > 0) {
+				$scope.bestMatch = data.businesses[0];
+
+				$scope.bestMatch.activeId = MatchDetails.getActiveId();
+
+				// Delete active search
+				deleteSearch(MatchDetails.getActiveId());
+
+				// Set active match in database
+				addMatch($scope.bestMatch);
+
+				console.log($scope.bestMatch);
+			}
 		});
+
+		function deleteSearch(id) {
+			var searchesRef = firebase.database().ref('active-searches');
+			$scope.searches = $firebaseArray(searchesRef);
+
+			if ($scope.searches.length > 0) {
+				$scope.searches.$remove($scope.searches.$getRecord(id)).then(function() {
+					console.log("Removed by ID");
+				});
+			} else {
+				searchesRef.remove().then(function() {
+					console.log("Removed by index");
+				});
+			}
+		}
+
+		function addMatch(bestMatch) {
+			var matchesRef = firebase.database().ref('active-matches'); 
+			matchesRef.push(bestMatch, function() {
+				console.log("Added match");
+			});
+		}
 	}
 ]);
 
@@ -211,30 +257,30 @@ site.service("MatchDetails", function() {
 	var latitude;
 	var longitude;
 	var maxRadius;
+	var activeId;
 
 	return {
 		getLatitude: function() {
 			return latitude;
 		},
 
-		setLatitude: function(lat) {
-			latitude = lat;
-		},
-
 		getLongitude: function() {
 			return longitude;
-		},
-
-		setLongitude: function(long) {
-			longitude = long;
 		},
 
 		getMaxRadius: function() {
 			return maxRadius;
 		},
 
-		setMaxRadius: function(maxRad) {
-			maxRadius = maxRad;
+		getActiveId: function() {
+			return activeId;
+		},
+
+		setData: function(newMatch) {
+			latitude = newMatch.latitude;
+			longitude = newMatch.longitude;
+			maxRadius = newMatch.maxRadius;
+			activeId = newMatch.activeId;
 		}
 	} 
 });

@@ -237,10 +237,6 @@ site.controller("ResultController", ["$scope", "$firebaseArray", "MatchDetails",
 				$scope.searches.$remove($scope.searches.$getRecord(id)).then(function() {
 					console.log("Removed by ID");
 				});
-			} else {
-				searchesRef.remove().then(function() {
-					console.log("Removed by index");
-				});
 			}
 		}
 

@@ -2,7 +2,13 @@
 
 	<div>
 		<p>You're going to</p>
-		<h1 class="banner-title">Restaurant Name</h1>
+		<h1 class="banner-title">{{ bestMatch.name }}</h1>
+		<img ng-src="{{ bestMatch.image_url }}" />
+		<p>Rating: {{ bestMatch.rating }} / 5</p>
+		<p>Address</p>
+		<div ng-repeat="addressInfo in bestMatch.location.display_address | limitTo: 3">
+			<p>{{ addressInfo }}</p>
+		</div>
 	</div>
 
 </section>
