@@ -1,6 +1,6 @@
 <section id='countdown' class="flood-section">
 
-	<div class="banner countdown-timer">
+	<div ng-hide="sorry" class="banner countdown-timer">
 		<h1 class="banner-title">Countdown</h1>
 
 		<div id="clockdiv">
@@ -13,7 +13,10 @@
 		    <div class="smalltext">Seconds</div>
 		  </div>
 		</div>
+	</div>
 
+	<div ng-show="sorry" class="banner sorry-banner">
+		<h1> D: It doesn't seem like anyone will be eating in your area. Sorry!</h1>
 	</div>
 
 </section>
