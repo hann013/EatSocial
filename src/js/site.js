@@ -119,6 +119,10 @@ site.controller("SearchController", ["$scope", "$firebaseAuth", "$firebaseArray"
 			waitMins : 5
 		}
 
+		$scope.validate = function() {
+			
+		}
+
 		$scope.submit = function() {
 			// get current location
 			if (navigator.geolocation) {
